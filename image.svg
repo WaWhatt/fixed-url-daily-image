@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+    <script type="text/javascript">
+        <![CDATA[
+            async function createImage() {
+                const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy URL
+                const bingApiUrl = 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US';
+                
+                try {
+                    // Fetch the Bing image metadata through the proxy
+                    const response = await fetch(proxyUrl + bingApiUrl);
+                    const data = await response.json();
+
+                    // Construct the full image URL
+                    const imageUrl = 'https://www.bing.com' + data.images[0].url;
+
+                    // Create image element
+                    const imageElement = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                    imageElement.setAttribute("href", imageUrl);
+                    imageElement.setAttribute("width", "800");
+                    imageElement.setAttribute("height", "600");
+                    imageElement.setAttribute("preserveAspectRatio", "xMidYMid slice");
+
+                    // Append the image to the SVG
+                    document.getElementsByTagName("svg")[0].appendChild(imageElement);
+                } catch (error) {
+                    console.error('Error fetching Bing image:', error);
+                }
+            }
+
+            // Call the function to create the image when the SVG loads
+            createImage();
+        ]]>
+    </script>
+</svg>
