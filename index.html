@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to Bing Daily Image</title>
+    <script>
+        // Function to fetch Bing's daily image using a CORS proxy
+        async function getBingDailyImage() {
+            const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy URL
+            const bingApiUrl = 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US';
+            
+            try {
+                // Fetch the Bing image metadata through the proxy
+                const response = await fetch(proxyUrl + bingApiUrl);
+                const data = await response.json();
+                
+                // Construct the full image URL
+                const imageUrl = 'https://www.bing.com' + data.images[0].url;
+                
+                // Redirect to the daily image
+                window.location.href = imageUrl;
+            } catch (error) {
+                console.error('Error fetching Bing image:', error);
+                document.body.innerHTML = '<h1>Error fetching image. Please try again later.</h1>';
+            }
+        }
+        
+        // Call the function to redirect when the page loads
+        window.onload = getBingDailyImage;
+    </script>
+</head>
+<body>
+    <h1>Redirecting to Bing's Daily Image...</h1>
+</body>
+</html>
