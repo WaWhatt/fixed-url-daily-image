@@ -1,0 +1,32 @@
+name: Update Bing Image of the Day
+
+on:
+  schedule:
+    - cron: "0 * * * *" # This will run every hour
+  workflow_dispatch:
+
+jobs:
+  update-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Fetch Bing Image of the Day
+        run: |
+          echo "Fetching the Bing image of the day..."
+          image_url=$(curl -s 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US' | jq -r '.images[0].url')
+          full_image_url="https://www.bing.com$image_url"
+          echo "Downloading image from $full_image_url"
+          curl -o image-of-the-day.jpg "$full_image_url"
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git add image-of-the-day.jpg
+          git commit -m "Update image-of-the-day.jpg"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
