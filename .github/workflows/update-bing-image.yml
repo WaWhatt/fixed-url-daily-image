@@ -32,6 +32,7 @@ jobs:
             fi
           else
             echo "No previous image found. Proceeding to commit."
+          fi
         id: compare_image
 
       - name: Commit and Push Changes
