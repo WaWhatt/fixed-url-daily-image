@@ -34,6 +34,7 @@ jobs:
           else
             echo "No previous image found. Commit is needed."
             echo "commit_needed=true" >> $GITHUB_ENV
+          fi
         id: compare_image
 
       - name: Commit and Push Changes
