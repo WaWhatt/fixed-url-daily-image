@@ -40,7 +40,13 @@ jobs:
       - name: Commit and Push Changes
         if: steps.compare_image.conclusion == 'success' # Proceed if the previous step had exit code 0
         run: |
+          mkdir -p iotd
+          current_date=$(date +%F)
+
           mv new-image-of-the-day.jpg image-of-the-day.jpg
+
+          cp image-of-the-day.jpg iotd/$current_date.jpg
+
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
           git add image-of-the-day.jpg
