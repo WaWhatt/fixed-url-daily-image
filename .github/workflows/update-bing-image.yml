@@ -25,32 +25,32 @@ jobs:
         run: |
           if [ -f image-of-the-day.jpg ]; then
             if cmp -s new-image-of-the-day.jpg image-of-the-day.jpg; then
-              echo "Images are the same. No need to commit."
-              exit 1
+              echo "Images are the same. Skipping commit."
+              echo "commit_needed=false" >> $GITHUB_ENV
             else
-              echo "Images are different. Proceeding to commit."
-              exit 0
+              echo "Images are different. Commit is needed."
+              echo "commit_needed=true" >> $GITHUB_ENV
             fi
           else
-            echo "No previous image found. Proceeding to commit."
-            exit 0
-          fi
+            echo "No previous image found. Commit is needed."
+            echo "commit_needed=true" >> $GITHUB_ENV
         id: compare_image
 
       - name: Commit and Push Changes
-        if: steps.compare_image.conclusion == 'success' # Proceed if the previous step had exit code 0
+        if: env.commit_needed == 'true' # Only commit if the previous step determined a commit is needed
         run: |
           mkdir -p iotd
           current_date=$(date +%F)
-
+          
+          # Move the new image and save it in the iotd folder with the date
           mv new-image-of-the-day.jpg image-of-the-day.jpg
-
           cp image-of-the-day.jpg iotd/$current_date.jpg
 
+          # Commit the changes
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
           git add *
-          git commit -m "Update image-of-the-day.jpg"
+          git commit -m "Update image-of-the-day and archive $current_date"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
