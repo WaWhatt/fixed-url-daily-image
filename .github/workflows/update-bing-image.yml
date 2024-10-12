@@ -49,7 +49,7 @@ jobs:
 
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
-          git add image-of-the-day.jpg
+          git add *
           git commit -m "Update image-of-the-day.jpg"
           git push
         env:
