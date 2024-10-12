@@ -26,17 +26,19 @@ jobs:
           if [ -f image-of-the-day.jpg ]; then
             if cmp -s new-image-of-the-day.jpg image-of-the-day.jpg; then
               echo "Images are the same. No need to commit."
-              exit 0
+              exit 1
             else
               echo "Images are different. Proceeding to commit."
+              exit 0
             fi
           else
             echo "No previous image found. Proceeding to commit."
+            exit 0
           fi
         id: compare_image
 
       - name: Commit and Push Changes
-        if: steps.compare_image.outcome != 'success'
+        if: steps.compare_image.conclusion == 'success' # Proceed if the previous step had exit code 0
         run: |
           mv new-image-of-the-day.jpg image-of-the-day.jpg
           git config --local user.name "github-actions"
